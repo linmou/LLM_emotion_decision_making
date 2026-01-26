@@ -1,0 +1,324 @@
+name: Research-Grade Test Suite
+
+on:
+  push:
+    branches: [main, develop, flexible_dataset]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run critical tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+env:
+  PYTHON_VERSION: "3.10"
+  CONDA_ENV: llm_behav
+
+jobs:
+  # Research-critical tests (must always pass)
+  critical-tests:
+    runs-on: ubuntu-latest
+    name: "P0 Critical Tests"
+    timeout-minutes: 15
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ env.PYTHON_VERSION }}
+          environment-file: environment.yml
+          activate-environment: ${{ env.CONDA_ENV }}
+          
+      - name: Verify Environment
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+          python --version
+          
+      - name: Run Critical Tests
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments
+          python -m pytest tests/priorities/research_critical.py -v --tb=short \
+            --maxfail=1 --no-header --strict-markers
+            
+      - name: Critical Test Report
+        if: failure()
+        run: |
+          echo "❌ CRITICAL TESTS FAILED - Research validity compromised!"
+          echo "::error::Critical scientific validity tests failed. All development must stop until fixed."
+          exit 1
+
+  # Fast unit tests
+  unit-tests:
+    runs-on: ubuntu-latest
+    name: "Unit Tests"
+    timeout-minutes: 20
+    needs: critical-tests
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ env.PYTHON_VERSION }}
+          environment-file: environment.yml
+          activate-environment: ${{ env.CONDA_ENV }}
+          
+      - name: Run Unit Tests
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments
+          python -m pytest tests/unit/ -v --tb=short \
+            --cov=emotion_memory_experiments \
+            --cov-report=xml \
+            --cov-report=html \
+            --maxfail=10
+            
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./emotion_memory_experiments/coverage.xml
+          flags: unit
+          
+  # Integration tests
+  integration-tests:
+    runs-on: ubuntu-latest
+    name: "Integration Tests" 
+    timeout-minutes: 30
+    needs: unit-tests
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ env.PYTHON_VERSION }}
+          environment-file: environment.yml
+          activate-environment: ${{ env.CONDA_ENV }}
+          
+      - name: Run Integration Tests
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments
+          python -m pytest tests/integration/ -v --tb=short \
+            --maxfail=5
+            
+  # Regression tests (critical for API stability)
+  regression-tests:
+    runs-on: ubuntu-latest
+    name: "Regression Tests"
+    timeout-minutes: 45
+    needs: [unit-tests, integration-tests]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ env.PYTHON_VERSION }}
+          environment-file: environment.yml
+          activate-environment: ${{ env.CONDA_ENV }}
+          
+      - name: Initialize Test Data
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments/tests
+          python test_data/version_control.py init
+          
+      - name: Run Regression Tests
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments
+          python -m pytest tests/regression/ -v --tb=short \
+            --maxfail=3 \
+            --strict-markers
+            
+      - name: Verify Test Data Integrity
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments/tests
+          python test_data/version_control.py verify
+
+  # Performance monitoring
+  performance-tests:
+    runs-on: ubuntu-latest
+    name: "Performance Monitoring"
+    timeout-minutes: 30
+    needs: regression-tests
+    if: github.event_name != 'schedule'  # Skip on scheduled runs
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ env.PYTHON_VERSION }}
+          environment-file: environment.yml
+          activate-environment: ${{ env.CONDA_ENV }}
+          
+      - name: Run Performance Tests
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments
+          python -m pytest tests/unit/ tests/integration/ \
+            --benchmark-autosave \
+            --benchmark-save-data \
+            --tb=short -q
+            
+      - name: Performance Analysis
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments/tests
+          python utils/performance_tracker.py report --category unit
+          python utils/performance_tracker.py analyze --category integration
+          
+      - name: Upload Performance Data
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-reports
+          path: emotion_memory_experiments/tests/performance_*.json
+          retention-days: 30
+
+  # Full E2E tests (runs less frequently)
+  e2e-tests:
+    runs-on: ubuntu-latest
+    name: "End-to-End Tests"
+    timeout-minutes: 60
+    needs: regression-tests
+    if: github.event_name == 'schedule' || contains(github.event.head_commit.message, '[e2e]')
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ env.PYTHON_VERSION }}
+          environment-file: environment.yml
+          activate-environment: ${{ env.CONDA_ENV }}
+          
+      - name: Run E2E Tests
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments
+          python -m pytest tests/e2e/ -v --tb=short \
+            --maxfail=2
+            
+  # Test quality metrics
+  test-quality:
+    runs-on: ubuntu-latest
+    name: "Test Quality Analysis"
+    timeout-minutes: 15
+    needs: [unit-tests, integration-tests]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for change analysis
+          
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ env.PYTHON_VERSION }}
+          environment-file: environment.yml
+          activate-environment: ${{ env.CONDA_ENV }}
+          
+      - name: Analyze Test Coverage Changes
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments
+          
+          # Run tests with coverage on current branch
+          python -m pytest tests/unit/ tests/integration/ \
+            --cov=emotion_memory_experiments \
+            --cov-report=json:coverage-new.json \
+            -q
+            
+          # Compare with main branch (if possible)
+          git checkout main || echo "No main branch comparison"
+          python -m pytest tests/unit/ tests/integration/ \
+            --cov=emotion_memory_experiments \
+            --cov-report=json:coverage-main.json \
+            -q || echo "Main branch test run failed"
+            
+          git checkout ${{ github.sha }}
+          
+          # Generate coverage diff report
+          python -c "
+          import json
+          try:
+              with open('coverage-new.json') as f: new_cov = json.load(f)['totals']['percent_covered']
+              with open('coverage-main.json') as f: main_cov = json.load(f)['totals']['percent_covered']
+              diff = new_cov - main_cov
+              print(f'Coverage change: {diff:+.2f}% (new: {new_cov:.2f}%, main: {main_cov:.2f}%)')
+              if diff < -2.0:
+                  print('::warning::Significant coverage decrease detected')
+          except:
+              print('Coverage comparison failed')
+          "
+          
+      - name: Intelligent Test Selection
+        shell: bash -l {0}
+        run: |
+          cd emotion_memory_experiments/tests
+          python utils/test_runners.py smart-selection \
+            --changed-files ${{ github.event.pull_request.changed_files }}
+
+  # Summary job
+  test-summary:
+    runs-on: ubuntu-latest
+    name: "Test Results Summary"
+    needs: [critical-tests, unit-tests, integration-tests, regression-tests]
+    if: always()
+    
+    steps:
+      - name: Test Results Summary
+        run: |
+          echo "## 🧪 Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Critical tests status
+          if [ "${{ needs.critical-tests.result }}" == "success" ]; then
+            echo "✅ **Critical Tests**: PASSED - Research validity protected" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Critical Tests**: FAILED - ⚠️  Research validity at risk!" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Unit tests status
+          if [ "${{ needs.unit-tests.result }}" == "success" ]; then
+            echo "✅ **Unit Tests**: PASSED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Unit Tests**: FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Integration tests status
+          if [ "${{ needs.integration-tests.result }}" == "success" ]; then
+            echo "✅ **Integration Tests**: PASSED" >> $GITHUB_STEP_SUMMARY  
+          else
+            echo "❌ **Integration Tests**: FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Regression tests status
+          if [ "${{ needs.regression-tests.result }}" == "success" ]; then
+            echo "✅ **Regression Tests**: PASSED - API stability maintained" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Regression Tests**: FAILED - ⚠️  Breaking changes detected!" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📊 [View detailed test reports in the Actions logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,86 @@
+[tool:pytest]
+# Pytest configuration for emotion memory experiments
+
+# Test discovery
+testpaths = emotion_experiment_engine/tests
+python_files = test_*.py
+python_classes = Test*
+python_functions = test_*
+
+# Markers
+markers =
+    unit: Unit tests (fast, isolated)
+    integration: Integration tests (moderate speed)
+    regression: Regression tests (ensure no breaking changes)
+    e2e: End-to-end tests (slow, comprehensive)
+    critical: Research-critical tests (must never fail)
+    comprehensive: Comprehensive test suites covering entire components
+    slow: Tests that take >5 seconds
+    gpu: Tests requiring GPU resources
+    golden: Golden dataset tests
+    statistical: Statistical validation tests
+    property: Property-based tests
+    performance: Performance benchmark tests
+    flaky: Known flaky tests (run with retries)
+
+# Output configuration
+addopts = 
+    --strict-markers
+    --strict-config
+    --verbose
+    --tb=short
+    --maxfail=5
+    --disable-warnings
+    --color=yes
+    --durations=10
+    --cov=emotion_experiment_engine
+    --cov-report=term-missing
+    --cov-report=html:emotion_experiment_engine/tests/coverage/html
+    --cov-report=xml:emotion_experiment_engine/tests/coverage/coverage.xml
+    --cov-fail-under=85
+
+# Timeout configuration
+timeout = 300
+timeout_method = thread
+
+# Filtering
+filterwarnings =
+    ignore::DeprecationWarning
+    ignore::PendingDeprecationWarning
+    ignore::UserWarning:transformers.*
+    ignore::UserWarning:torch.*
+    error::RuntimeWarning
+
+# Minimum version requirements
+minversion = 7.0
+
+# Test discovery patterns
+norecursedirs = 
+    .git
+    .tox
+    dist
+    build
+    *.egg
+    __pycache__
+    .pytest_cache
+
+# Logging
+log_cli = true
+log_cli_level = INFO
+log_cli_format = %(asctime)s [%(levelname)8s] %(name)s: %(message)s
+log_cli_date_format = %Y-%m-%d %H:%M:%S
+
+# Collection
+collect_ignore = [
+    "setup.py",
+    "docs/",
+    "build/",
+    "dist/"
+]
+
+# Custom test order
+# Critical tests run first, then unit, integration, regression, e2e
+# Within each category, alphabetical order
+junit_family = xunit2
+junit_logging = all
+junit_log_passing_tests = true

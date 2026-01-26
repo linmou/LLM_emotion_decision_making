@@ -1,0 +1,183 @@
+# Test Configuration for Emotion Memory Experiments
+# This config is used for integration testing with mocked GPU components
+
+# Experiment metadata
+experiment_name: "emotion_memory_integration_test"
+description: "Integration test for emotion memory experiments with mocked GPU"
+version: "1.0.0"
+
+# Model configuration (mocked for testing)
+model:
+  name: "qwen2.5-0.5b-instruct"
+  path: "/mock/model/path/Qwen2.5-0.5B-Instruct"  # Will be mocked
+  type: "qwen"
+  max_context_length: 32768
+  
+# GPU and hardware settings (will be mocked)
+hardware:
+  device: "cuda"  # Will be mocked to use CPU
+  gpu_memory_utilization: 0.90
+  tensor_parallel_size: 1
+  max_num_seqs: 8
+  
+# Emotion manipulation settings
+emotions:
+  # Primary emotions to test
+  target_emotions: ["anger", "happiness", "sadness", "fear", "disgust", "surprise"]
+  
+  # Control condition
+  include_neutral: true
+  
+  # Emotion intensity levels
+  intensities: [0.5, 1.0, 1.5]
+  
+  # RepE configuration (will be mocked)
+  repe_config:
+    layer_ids: [8, 12, 16]  # Target layers for emotion activation
+    activation_strength: 1.0
+    use_thinking_mode: false
+
+# Benchmark configurations
+benchmarks:
+  # InfiniteBench Passkey Test
+  infinitebench_passkey:
+    name: "infinitebench"
+    task_type: "passkey"
+    data_path: "test_data/real_benchmarks/infinitebench_passkey.jsonl"
+    evaluation_method: "get_score_one_passkey"
+    sample_limit: 5  # Small sample for testing
+    
+  # LongBench QA Test  
+  longbench_qa:
+    name: "longbench"
+    task_type: "longbook_qa_eng"
+    data_path: "test_data/real_benchmarks/longbench_sample.jsonl"
+    evaluation_method: "qa_f1_score"
+    sample_limit: 3
+    
+  # LoCoMo Conversational Test
+  locomo_conversation:
+    name: "locomo"
+    task_type: "conversational_qa"
+    data_path: "test_data/real_benchmarks/locomo_sample.json"
+    evaluation_method: "f1_score_with_stemming"
+    sample_limit: 4
+
+# Generation parameters
+generation:
+  temperature: 0.1
+  max_new_tokens: 100
+  do_sample: false
+  top_p: 0.9
+  repetition_penalty: 1.0
+  stop_tokens: ["<|endoftext|>", "<|im_end|>"]
+
+# Experiment execution settings
+execution:
+  batch_size: 2  # Small batch for testing
+  max_concurrent_requests: 2
+  timeout_seconds: 30
+  retry_attempts: 3
+  
+  # Prompt wrapper settings
+  prompt_wrapper:
+    enable: true
+    format: "qwen"  # Use Qwen prompt format
+    include_thinking: false
+    system_prompt_override: null
+
+# Output and logging configuration
+output:
+  results_dir: "test_results/integration"
+  save_intermediate: true
+  save_raw_responses: true
+  
+  # File formats
+  formats: ["csv", "json"]
+  
+  # Detailed logging for debugging
+  log_level: "DEBUG"
+  log_file: "test_results/integration/experiment.log"
+
+# Test-specific settings
+testing:
+  # Mock configurations
+  mock_gpu: true
+  mock_model_loading: true
+  mock_vllm_server: true
+  
+  # Validation settings
+  validate_evaluation_metrics: true
+  validate_prompt_formatting: true
+  validate_data_loading: true
+  
+  # Performance thresholds for testing
+  thresholds:
+    max_response_time_seconds: 5.0  # Per item
+    min_evaluation_score: 0.0
+    max_evaluation_score: 1.0
+    
+  # Test data expectations
+  expected_results:
+    infinitebench_items: 5
+    longbench_items: 3  
+    locomo_items: 4
+    total_emotion_conditions: 7  # 6 emotions + neutral
+    total_intensity_levels: 3
+
+# Validation rules
+validation:
+  # Required fields in results
+  required_result_fields:
+    - "emotion"
+    - "intensity" 
+    - "item_id"
+    - "task_name"
+    - "response"
+    - "ground_truth"
+    - "score"
+    - "benchmark"
+    - "response_time"
+    
+  # Data integrity checks
+  checks:
+    response_not_empty: true
+    score_in_valid_range: true
+    emotion_in_expected_list: true
+    benchmark_task_consistency: true
+
+# Error handling
+error_handling:
+  continue_on_evaluation_error: false
+  continue_on_generation_error: false
+  max_consecutive_failures: 3
+  
+  # Fallback behaviors
+  fallbacks:
+    use_neutral_on_emotion_failure: true
+    use_default_response_on_timeout: false
+
+# Performance monitoring
+monitoring:
+  track_memory_usage: true
+  track_response_times: true
+  track_error_rates: true
+  
+  # Resource limits for testing
+  limits:
+    max_memory_gb: 8
+    max_runtime_minutes: 10
+    
+# Debug and development settings
+debug:
+  enable_debug_mode: true
+  save_debug_info: true
+  verbose_logging: true
+  
+  # Mock responses for deterministic testing
+  mock_responses:
+    enable: false  # Set to true for fully deterministic tests
+    responses:
+      passkey: "The passkey is 12345"
+      qa: "Machine learning is a subset of AI"
+      conversation: "Alice's budget is $30,000"
