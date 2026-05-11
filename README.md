@@ -1,5 +1,5 @@
 # Public Release: Emotion Experiment Engine
-<!-- Updated: 2026-05-11 | Commit: pending -->
+<!-- Updated: 2026-05-11 | Commit: 52f62ad -->
 
 This repository is the public snapshot of `emotion_experiment_engine` and its
 core dependencies (`neuro_manipulation`, `games`, and shared utilities). It is
