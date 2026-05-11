@@ -25,9 +25,7 @@ from games.wait_go_game import WaitGoDecision, WaitGoScenario
 from games.sealed_auction import SealedAuctionDecision, SealedAuctionScenario
 
 # data_path_format = "groupchat/scenarios/{}_all_data_samples.json"  # data path is json containing all data samples
-data_path_format = (
-    "data_creation/scenario_creation/langgraph_creation/{}_all_data_samples.json"
-)
+data_path_format = "dataset/{}_all_data_samples.json"
 data_folder_format = "groupchat/scenarios/{}"  # data folder is the folder containing the seperated data samples
 
 GAME_CONFIGS = {
@@ -110,6 +108,7 @@ GAME_CONFIGS = {
         "scenario_class": TrustGameTrusteeScenario,
         "decision_class": TrustGameDecision,
         "previous_actions_length": 1, 
+        "previous_trust_level": 0,
         "payoff_matrix": dict(),
         "data_path": data_path_format.format(GameNames.TRUST_GAME_TRUSTOR.value),
         "data_folder": data_folder_format.format(GameNames.TRUST_GAME_TRUSTOR.value),
@@ -118,6 +117,7 @@ GAME_CONFIGS = {
         "game_name": GameNames.ULTIMATUM_GAME_PROPOSER.value,
         "scenario_class": UltimatumGameProposerScenario,
         "decision_class": UltimatumGameDecision,
+        "previous_actions_length": 0,
         "payoff_matrix": dict(),
         "data_path": data_path_format.format(GameNames.ULTIMATUM_GAME_PROPOSER.value),
         "data_folder": data_folder_format.format(
@@ -128,6 +128,8 @@ GAME_CONFIGS = {
         "game_name": GameNames.ULTIMATUM_GAME_RESPONDER.value,
         "scenario_class": UltimatumGameResponderScenario,
         "decision_class": UltimatumGameDecision,
+        "previous_actions_length": 1,
+        "previous_offer_level": 1,
         "payoff_matrix": dict(),
         "data_path": data_path_format.format(GameNames.ULTIMATUM_GAME_PROPOSER.value),
         "data_folder": data_folder_format.format(

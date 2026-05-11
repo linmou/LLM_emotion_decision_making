@@ -1,0 +1,144 @@
+experiment_name: "vlm_mm_game_theory_300"
+description: "VLM game-theory config across 9 game task variants"
+version: "1.0.0"
+
+models:
+  - "${USER_HOME}/huggingface_models/microsoft/Phi-4-multimodal-instruct"
+  - "${USER_HOME}/huggingface_models/microsoft/Phi-3.5-vision-instruct"
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen3-VL-2B-Instruct"
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen3-VL-4B-Instruct"
+  - "${USER_HOME}/huggingface_models/OpenGVLab/InternVL3-1B"
+  - "${USER_HOME}/huggingface_models/OpenGVLab/InternVL3-2B"
+  - "${USER_HOME}/huggingface_models/OpenGVLab/InternVL3-8B-AWQ"
+
+emotions: ["anger", "sadness", "happiness", "surprise", "fear", "disgust"]
+intensities: [0.8, 1.0, 1.5]
+
+benchmarks:
+  - name: "game_theory"
+    task_type: "Prisoners_Dilemma"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Stag_Hunt"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Escalation_Game"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 0
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Trust_Game_Trustor"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 0
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Trust_Game_Trustee"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 1
+      previous_trust_level: 1
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Ultimatum_Game_Proposer"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 0
+      previous_offer_level: 1
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Ultimatum_Game_Responder"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 1
+      previous_offer_level: 2
+    enable_auto_truncation: false
+    truncation_strategy: "right"
+    preserve_ratio: 1.0
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Beauty_Contest"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+  - name: "game_theory"
+    task_type: "Sealed_Auction"
+    sample_limit: 300
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+
+loading_config:
+  gpu_memory_utilization: 0.88
+  enforce_eager: true
+  quantization: null
+  max_model_len: 4096
+  trust_remote_code: true
+  dtype: "float16"
+  seed: 1
+  disable_custom_all_reduce: false
+  additional_vllm_kwargs: {}
+
+repe_eng_config:
+  data_dir: "multimodal_crow_envnt/emotion_envent"
+  multimodal_intent: true
+
+repeat_runs: 1
+
+generation_config:
+  temperature: 0.1
+  max_new_tokens: 1000
+  do_sample: false
+  top_p: 0.9
+  repetition_penalty: 1.0
+  top_k: -1
+  min_p: 0.0
+  presence_penalty: 0.0
+  frequency_penalty: 0.0
+  enable_thinking: false
+
+batch_size: 800
+
+output_dir: "results/vlm_mm_game_theory/sample300"
+defer_evaluation: true
+sanity_check: false

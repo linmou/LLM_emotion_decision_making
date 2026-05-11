@@ -1,0 +1,20 @@
+{
+  "input_json": "data/stimulus/crowd-enVent_textlike/anger.json",
+  "output_dir": "data/stimulus/crowd-enVent_textlike",
+  "raw_jsonl": "data/stimulus/crowd-enVent_textlike/anger_controls_raw_gemini_2_5_flash.jsonl",
+  "social_norm_json": "data/stimulus/crowd-enVent_textlike/anger_social_norm.json",
+  "non_moral_json": "data/stimulus/crowd-enVent_textlike/anger_non_moral.json",
+  "total": 38,
+  "completed": 38,
+  "parse_failed": 0,
+  "api_error": 0,
+  "model": "gemini-2.5-flash",
+  "num_workers": 4,
+  "max_retries": 4,
+  "token_usage_aggregate": {
+    "prompt_token_count": 7031,
+    "candidates_token_count": 1470,
+    "total_token_count": 55808
+  },
+  "timestamp": 1772212809
+}

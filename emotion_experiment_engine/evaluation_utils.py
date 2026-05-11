@@ -583,8 +583,6 @@ def get_score_one(pred: str, label: Any, task_name: str, model_name: str) -> flo
 
 from typing import List
 
-import openai
-
 from api_configs import OAI_CONFIG, GEMINI_CONFIG
 
 # Global client to prevent file descriptor leaks
@@ -595,6 +593,12 @@ def _get_openai_client():
     """Get or create global OpenAI client to prevent file descriptor leaks"""
     global _global_client
     if _global_client is None:
+        try:
+            import openai  # type: ignore[import-not-found]
+        except Exception as exc:
+            raise RuntimeError(
+                "OpenAI client requested for LLM evaluation, but openai is not available"
+            ) from exc
         _global_client = openai.OpenAI(**OAI_CONFIG)
     return _global_client
 

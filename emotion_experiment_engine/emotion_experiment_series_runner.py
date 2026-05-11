@@ -39,6 +39,17 @@ from .data_models import (
 )
 
 
+def _expand_env_vars(value: Any) -> Any:
+    """Expand ${VAR} placeholders in loaded YAML config values."""
+    if isinstance(value, str):
+        return os.path.expandvars(value)
+    if isinstance(value, list):
+        return [_expand_env_vars(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _expand_env_vars(item) for key, item in value.items()}
+    return value
+
+
 def _ensure_openmp_shm_compat() -> None:
     """
     Avoid hard crashes from Intel OpenMP trying to use SHM in constrained envs.
@@ -378,7 +389,7 @@ class MemoryExperimentSeriesRunner:
         if self.config_path:
             try:
                 with open(self.config_path, "r") as _cf:
-                    new_config_if_provided = yaml.safe_load(_cf)
+                    new_config_if_provided = _expand_env_vars(yaml.safe_load(_cf))
             except Exception as e:
                 self.logger.warning(f"Failed to load --config for comparison: {e}")
 
@@ -461,7 +472,7 @@ class MemoryExperimentSeriesRunner:
         """Load configuration from YAML file"""
         assert self.config_path is not None
         with open(self.config_path, "r") as f:
-            self.base_config = yaml.safe_load(f)
+            self.base_config = _expand_env_vars(yaml.safe_load(f))
 
         # Validate required sections
         if "models" not in self.base_config:
@@ -1468,6 +1479,8 @@ def main():
     )
     parser.add_argument(
         "--dry-run",
+        "--dry_run",
+        dest="dry_run",
         action="store_true",
         help="Validate configuration without running experiments",
     )

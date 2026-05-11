@@ -1,7 +1,7 @@
 # Emotion Memory Experiments
-<!-- Updated: 2025-12-29 | Commit: 5dfa39c -->
+<!-- Updated: 2026-05-11 | Commit: pending -->
 
-Updated: 2025-12-29 · commit: 5dfa39c
+Updated: 2026-05-11 · commit: pending
 
 Ultra-simple PyTorch datasets for memory benchmark testing with emotion activation integration.
 
@@ -121,8 +121,46 @@ python -m emotion_experiment_engine.emotion_experiment_series_runner \
 
 Notes:
 - When starting a fresh run, the runner persists a `series_config` snapshot into the report.
+- YAML config values support environment-variable placeholders such as `${USER_HOME}`.
 - `--resume` expects a path to a report JSON; it uses the embedded `series_config` and runs only pending experiments listed in that report.
 - If you pass both `--resume <report.json>` and `--config <new.yaml>`, the tool compares configs. If they differ and stdin is interactive, it shows a unified diff and asks whether to use the new config for the resumed run. Choosing the new config updates `series_config` in the report. Pending experiment list still comes from the report.
+
+### Public Game-Theory Configs
+
+The public repo includes four ready-to-run game-theory series configs:
+
+- `config/new_game_theory_config.yaml`: 13 text LMs on `game_theory`
+- `config/new_game_theory_decision_config.yaml`: 13 text LMs on `game_theory_decision`
+- `config/vlm_mm_game_theory_300.yaml`: 7 VLMs on `game_theory`
+- `config/vlm_mm_game_theory_decision_300.yaml`: 7 VLMs on `game_theory_decision`
+
+Each config covers 9 task variants:
+`Prisoners_Dilemma`, `Stag_Hunt`, `Escalation_Game`,
+`Trust_Game_Trustor`, `Trust_Game_Trustee`, `Ultimatum_Game_Proposer`,
+`Ultimatum_Game_Responder`, `Beauty_Contest`, and `Sealed_Auction`.
+
+Dataset and stimulus layout:
+
+- Game scenarios: `dataset/*_all_data_samples.json`
+- Text emotion stimulus: `data/stimulus/crowd-enVent_textlike/`
+- VLM emotion stimulus: `multimodal_crow_envnt/emotion_envent/`
+
+The VLM PNG stimulus files are tracked with Git LFS. Run `git lfs install` and
+`git lfs pull` after cloning before running VLM configs.
+
+Dry-run examples:
+
+```bash
+export USER_HOME="$HOME"
+
+python -m emotion_experiment_engine.emotion_experiment_series_runner \
+  --config config/new_game_theory_config.yaml \
+  --dry_run
+
+python -m emotion_experiment_engine.emotion_experiment_series_runner \
+  --config config/vlm_mm_game_theory_300.yaml \
+  --dry_run
+```
 
 Session tracking
 - The report records session starts/ends, shutdown requests (SIGINT), and whether a session resumed from a report or started fresh. See `sessions` in the report JSON for details.

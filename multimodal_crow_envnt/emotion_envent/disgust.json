@@ -1,0 +1,200 @@
+[
+  {
+    "image": "disgust/255_v2.png",
+    "text": "You discover slimy, smelly rotten onions in your cupboard.",
+    "crow_enVent_text": "I found some rotten onions in my cupboard that were slimy and smelly and I had to clean it up",
+    "text_id": "255"
+  },
+  {
+    "image": "disgust/256_v0.png",
+    "text": "You see strawberries that have gone off, exploded, and grown mold.",
+    "crow_enVent_text": "i got the strawberries out of the fridge and they had gone off, exploded and gone furry.",
+    "text_id": "256"
+  },
+  {
+    "image": "disgust/745_v2.png",
+    "text": "You see someone with massive toenails.",
+    "crow_enVent_text": "His toenails where massive",
+    "text_id": "745"
+  },
+  {
+    "image": "disgust/3248_v1.png",
+    "text": "You see someone picking their toenails.",
+    "crow_enVent_text": "Seeing my brother picking his toe nails",
+    "text_id": "3248"
+  },
+  {
+    "image": "disgust/3254_v0.png",
+    "text": "You see bugs or other gross things.",
+    "crow_enVent_text": "When i see bugs or any gross stuff.And that when i feel disgust",
+    "text_id": "3254"
+  },
+  {
+    "image": "disgust/3292_v2.png",
+    "text": "You see a surgery where someone is cut open and their organs are pulled out.",
+    "crow_enVent_text": "I was watching a show and it showed someone having surgery. They were cut open on the table and their organs were being pulled out.",
+    "text_id": "3292"
+  },
+  {
+    "image": "disgust/3274_v1.png",
+    "text": "You see someone drop food on the floor and continue to eat it.",
+    "crow_enVent_text": "someone dropped meat on the floor at work and used it.",
+    "text_id": "3274"
+  },
+  {
+    "image": "disgust/3321_safe.png",
+    "text": "You enter a hoarder's house and smell a sweet-and-sour stench.",
+    "crow_enVent_text": "I was dating a girl during high school and after some date I took her home. Normally I would just drop her off and head home myself, but this time she and her guardian invited me inside to relax before the long drive home. Once inside I discovered that her family were hoarders and rarely, if ever, would clean the house using actual products. The house had a smell to it that would differ between rooms, but it always seemed to be a sweet-and-sour kind of stench. At the time I never said anything aside from offering to clean some stuff, but it was often physically revolting to be inside the house for any extended period of time.",
+    "text_id": "3321"
+  },
+  {
+    "image": "disgust/3328_v1.png",
+    "text": "You bite into a sausage and find gristle in it.",
+    "crow_enVent_text": "I felt disgust when I ate a meal which had sausages and when i bit into a sausage it had gristle in it",
+    "text_id": "3328"
+  },
+  {
+    "image": "disgust/3344_safe.png",
+    "text": "You see a patient defecate on the hospital floor while walking.",
+    "crow_enVent_text": "I was working in a hospital and a physio was walking a patient through the corridor in a few metres in front of me. The poor patient through no fault of her own was incontinent and had not been given a nappy. She defecated on the floor while walking with the physio and had I not been paying attention I would have walked right the the excrement.",
+    "text_id": "3344"
+  },
+  {
+    "image": "disgust/4400_v0.png",
+    "text": "You see a dead bird in your yard with its guts torn out and splattered.",
+    "crow_enVent_text": "I felt disgusted when I walked outside to my backyard and saw a dead bird. It made me want to throw up because its gut were torn out and were splattered everywhere. It was a couple weeks ago but everytime I go to my yard I think about the little bird and the blood. It makes me want to vomit.",
+    "text_id": "4400"
+  },
+  {
+    "image": "disgust/3347_v2.png",
+    "text": "You see someone vomit outside a shop.",
+    "crow_enVent_text": "when I saw someone being sick outside a shop",
+    "text_id": "3347"
+  },
+  {
+    "image": "disgust/4431_v1.png",
+    "text": "You see a dead rat on the street.",
+    "crow_enVent_text": "I was walking to buy food and saw a dead rat on the street",
+    "text_id": "4431"
+  },
+  {
+    "image": "disgust/4454_v2.png",
+    "text": "You see mouldy food.",
+    "crow_enVent_text": "I saw mouldy food",
+    "text_id": "4454"
+  },
+  {
+    "image": "disgust/5502_v2.png",
+    "text": "You see a child throw up in a classroom.",
+    "crow_enVent_text": "a child threw up in my classroom",
+    "text_id": "5502"
+  },
+  {
+    "image": "disgust/5515_v2.png",
+    "text": "You discover a rotten banana in your car.",
+    "crow_enVent_text": "I found a rotten banana in my new car",
+    "text_id": "5515"
+  },
+  {
+    "image": "disgust/5550_v1.png",
+    "text": "You hear people chewing loudly.",
+    "crow_enVent_text": "People chew loudly",
+    "text_id": "5550"
+  },
+  {
+    "image": "disgust/5572_v2.png",
+    "text": "You discover rotten food in a cupboard.",
+    "crow_enVent_text": "If I found rotten food in a cupboard when I moved into my new house.",
+    "text_id": "5572"
+  },
+  {
+    "image": "disgust/5580_v1.png",
+    "text": "You enter a filthy public toilet and see faeces on the floor.",
+    "crow_enVent_text": "I took my child into a family toilet in a shopping centre. The room was absolutely filthy and there was even poo on the floor.",
+    "text_id": "5580"
+  },
+  {
+    "image": "disgust/5605_v1.png",
+    "text": "You feel sticky sweat in your hair and smell spilled beer.",
+    "crow_enVent_text": "I slept over at a romantic partner's house after a gig recently. I could smell beer in my hair that was spilt on me during the gig and could feel sweat all over me, but the feeling of sweat on the back of my neck making my hair damp was completely repulsive to me. I was really distracted for the rest of the morning by wanting to go home and shower so I wouldn't feel that sensation anymore. I have quite a strong sensory aversion to the smell and sticky texture of a lot of alcohol when it's spilled, so that was the main source of my disgust.",
+    "text_id": "5605"
+  },
+  {
+    "image": "disgust/5627_v0.png",
+    "text": "You bite into toast and find it is mouldy.",
+    "crow_enVent_text": "I went to bite into toast to find the bread was mouldy",
+    "text_id": "5627"
+  },
+  {
+    "image": "disgust/5654_v1.png",
+    "text": "You hear someone chewing loudly with their mouth open.",
+    "crow_enVent_text": "of a family member chewing with her mouth wide open. Specifically, the noise.",
+    "text_id": "5654"
+  },
+  {
+    "image": "disgust/5658_v2.png",
+    "text": "You see a toddler licking a grocery store checkout belt.",
+    "crow_enVent_text": "I saw a toddler in the grocery store licking the side of the check out belt area in the middle of a pandemic. I gagged in my mouth.",
+    "text_id": "5658"
+  },
+  {
+    "image": "disgust/5680_v2.png",
+    "text": "You see a pet owner not picking up after their dog on the street.",
+    "crow_enVent_text": "I saw someone let their dog poo on the road and they didn't pick it up",
+    "text_id": "5680"
+  },
+  {
+    "image": "disgust/5704_v2.png",
+    "text": "Someone flicks a wet bogey onto your cheek.",
+    "crow_enVent_text": "Someone flicked a wet bogey on to my cheek. It was disgusting",
+    "text_id": "5704"
+  },
+  {
+    "image": "disgust/5705_safe.png",
+    "text": "You discover a healthcare colleague is an anti-vaxxer.",
+    "crow_enVent_text": "When I found out a colleague I used to work with was an anti-vaxxer; I work in healthcare so... to me, a nurse who doesn't believe in science is openly choosing to put her patients at risk, which is disgusting to me.",
+    "text_id": "5705"
+  },
+  {
+    "image": "disgust/5689_v2.png",
+    "text": "You bite into a burger and find it is undercooked and pink.",
+    "crow_enVent_text": "I felt disgust when I went to bite into my burger only to find out it was not cooked properly and pink in the middle.",
+    "text_id": "5689"
+  },
+  {
+    "image": "disgust/6249_v2.png",
+    "text": "You see someone eating a bowl of larvae.",
+    "crow_enVent_text": "When i seen a video of a person eating a bowl of Larvae on tiktok",
+    "text_id": "6249"
+  },
+  {
+    "image": "disgust/6228_v2.png",
+    "text": "Your dog rolls on a decomposing rabbit, covered in maggots and smelling foul.",
+    "crow_enVent_text": "My dog rolled on a decomposing rabbit, which caused her to smell very much and actually left her with maggots wriggling on her.",
+    "text_id": "6228"
+  },
+  {
+    "image": "disgust/6283_v2.png",
+    "text": "A stool sample container pops its cap and erupts.",
+    "crow_enVent_text": "at work when a stool sample popped the cap and erupted like a volcano",
+    "text_id": "6283"
+  },
+  {
+    "image": "disgust/6281_v1.png",
+    "text": "You see people eating live bugs from a bowl.",
+    "crow_enVent_text": "I was on tiktok and came across multiple live videos of people eating live bugs from a bowl.",
+    "text_id": "6281"
+  },
+  {
+    "image": "disgust/6288_v1.png",
+    "text": "You touch someone's spit on a handrail.",
+    "crow_enVent_text": "I was walking up the stairs in school and I put my hand in somebody\u2019s spit on the hand rail",
+    "text_id": "6288"
+  },
+  {
+    "image": "disgust/6308_v0.png",
+    "text": "You hear someone eating their food with their mouth wide open.",
+    "crow_enVent_text": "I was eating alongside someone, and they were eating their food with their mouth wide open.",
+    "text_id": "6308"
+  }
+]

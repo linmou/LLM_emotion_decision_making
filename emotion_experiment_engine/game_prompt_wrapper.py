@@ -65,8 +65,9 @@ class GameBenchmarkPromptWrapper:
         answer: Any,
         emotion: Optional[str],
         options: Optional[Sequence[Any]],
+        images: Optional[Sequence[Any]] = None,
     ) -> str:
-        del context, augmentation_config, answer, emotion  # unused in adapter
+        del context, augmentation_config, answer, emotion, images  # unused in adapter
         normalized_options = self._normalize_options(options)
 
         wrapper = self._ensure_wrapper()
@@ -111,6 +112,7 @@ class GameDecisionPromptWrapper(GameBenchmarkPromptWrapper):
         answer: Any,
         emotion: Optional[str],
         options: Optional[Sequence[Any]],
+        images: Optional[Sequence[Any]] = None,
     ) -> str:
         del context, augmentation_config, answer, emotion  # unused in adapter
         normalized_options = self._normalize_options(options)
@@ -139,10 +141,14 @@ class GameDecisionPromptWrapper(GameBenchmarkPromptWrapper):
         if self.prompt_format is None:
             return system_prompt
 
+        build_kwargs = {"enable_thinking": enable_thinking}
+        if images is not None:
+            build_kwargs["images"] = list(images)
+
         return self.prompt_format.build(
             system_prompt,
             list(user_messages),
-            enable_thinking=enable_thinking,
+            **build_kwargs,
         )
 
 class GameCompletionOptionIdPromptWrapper(GameBenchmarkPromptWrapper):
@@ -159,8 +165,9 @@ class GameCompletionOptionIdPromptWrapper(GameBenchmarkPromptWrapper):
         answer: Any,
         emotion: Optional[str],
         options: Optional[Sequence[Any]],
+        images: Optional[Sequence[Any]] = None,
     ) -> str:
-        del context, user_messages, enable_thinking, augmentation_config, answer, emotion  # unused
+        del context, user_messages, enable_thinking, augmentation_config, answer, emotion, images  # unused
         normalized_options = self._normalize_options(options)
         n_options = len(normalized_options)
         if n_options <= 0:

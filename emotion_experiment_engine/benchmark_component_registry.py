@@ -61,6 +61,7 @@ from .datasets.trustllm_robustness import TrustLLMRobustnessDataset
 from .datasets.trustllm_safety import TrustLLMSafetyDataset
 from .datasets.trustllm_truthfulness import TrustLLMTruthfulnessDataset
 from .datasets.games import GameTheoryCompletionOptionIdDataset, GameTheoryDataset
+from .datasets.games_multimodal import GameTheoryMultimodalDataset
 from .datasets.diplomacy_gradient import DiplomacyGradientDataset
 from .diplomacy_prompts import DiplomacyOptionsPromptWrapper
 def create_dataset_from_config(*args, **kwargs):  # lazy import to avoid heavy deps at import time
@@ -278,6 +279,11 @@ BENCHMARK_SPECS: Dict[Tuple[str, str], BenchmarkSpec] = {
     ),
     ("game_theory_decision", "*"): BenchmarkSpec(
         dataset_class=GameTheoryDataset,
+        answer_wrapper_class=IdentityAnswerWrapper,
+        prompt_wrapper_class=GameDecisionPromptWrapper,
+    ),
+    ("game_theory_mm", "*"): BenchmarkSpec(
+        dataset_class=GameTheoryMultimodalDataset,
         answer_wrapper_class=IdentityAnswerWrapper,
         prompt_wrapper_class=GameDecisionPromptWrapper,
     ),

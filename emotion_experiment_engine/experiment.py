@@ -39,6 +39,41 @@ from .benchmark_component_registry import create_benchmark_components
 from .truncation_utils import calculate_max_context_length
 
 
+class _DryRunTokenizer:
+    vocab_size = 0
+    pad_token_id = 0
+    eos_token_id = 0
+    bos_token_id = 0
+
+    def encode(self, text: str, *args: Any, **kwargs: Any) -> List[int]:
+        del args, kwargs
+        return list(range(len(str(text).split())))
+
+    def decode(self, token_ids: List[int], *args: Any, **kwargs: Any) -> str:
+        del token_ids, args, kwargs
+        return ""
+
+
+class _DryRunPromptFormat:
+    def __init__(self, tokenizer: Any) -> None:
+        self.tokenizer = tokenizer
+
+    def build(
+        self,
+        system_prompt: str,
+        user_messages: Any,
+        assistant_messages: Any = None,
+        images: Any = None,
+        enable_thinking: bool = False,
+    ) -> str:
+        del assistant_messages, images, enable_thinking
+        if isinstance(user_messages, str):
+            user_text = user_messages
+        else:
+            user_text = "\n".join(str(message) for message in user_messages)
+        return f"{system_prompt}\n{user_text}".strip()
+
+
 class EmotionExperiment:
     """
     Main experiment class for testing emotion effects on benchmarks.
@@ -47,7 +82,7 @@ class EmotionExperiment:
 
     def __init__(self, config: ExperimentConfig, dry_run: bool = False, repeat_runs: int = 1, repeat_seed_base: int | None = None):
         # GPU-independent components first
-        self._setup_basic_components(config)
+        self._setup_basic_components(config, dry_run=dry_run)
         # Repeat configuration (number of independent runs per condition)
         self.repeat_runs = int(repeat_runs) if repeat_runs and repeat_runs > 0 else 1
         self.cur_repeat: int = 0
@@ -63,7 +98,7 @@ class EmotionExperiment:
             # Setup GPU-dependent components
             self._setup_gpu_components(config)
 
-    def _setup_basic_components(self, config: ExperimentConfig):
+    def _setup_basic_components(self, config: ExperimentConfig, dry_run: bool = False):
         """Setup GPU-independent components: logging, tokenizer, prompt_format, truncation"""
         self.config = config
         self.neutral_only = len(config.emotions) == 0
@@ -130,14 +165,20 @@ class EmotionExperiment:
                 auto_load_multimodal=True,
             )
         except Exception:
-            # Avoid vllm import errors during dry-run by using transformers directly
-            from transformers import AutoTokenizer  # type: ignore
-            self.tokenizer = AutoTokenizer.from_pretrained(config.model_path)
+            if not dry_run:
+                from transformers import AutoTokenizer  # type: ignore
+                self.tokenizer = AutoTokenizer.from_pretrained(config.model_path)
+            else:
+                self.tokenizer = _DryRunTokenizer()
 
         # Create prompt format (only needs tokenizer)
-        from neuro_manipulation.prompt_formats import PromptFormat
-
-        self.prompt_format = PromptFormat(self.tokenizer)
+        try:
+            from neuro_manipulation.prompt_formats import PromptFormat
+            self.prompt_format = PromptFormat(self.tokenizer)
+        except Exception:
+            if not dry_run:
+                raise
+            self.prompt_format = _DryRunPromptFormat(self.tokenizer)
 
         # Setup truncation parameters
         self.max_context_length = None
@@ -507,8 +548,30 @@ class EmotionExperiment:
                                 f"Batch missing required 'prompts' key. Available keys: {list(batch.keys())}"
                             )
 
+                        pipeline_inputs = batch["prompts"]
+                        if self.is_vllm and "images" in batch and batch["images"] is not None:
+                            batch_images = batch["images"]
+                            if len(batch_images) != len(pipeline_inputs):
+                                raise ValueError(
+                                    "Batch size mismatch for multimodal inputs: "
+                                    f"prompts={len(pipeline_inputs)} images={len(batch_images)}"
+                                )
+                            multimodal_inputs = []
+                            for prompt, images in zip(pipeline_inputs, batch_images):
+                                if isinstance(images, list):
+                                    image_payload = images[0] if len(images) == 1 else images
+                                else:
+                                    image_payload = images
+                                multimodal_inputs.append(
+                                    {
+                                        "prompt": prompt,
+                                        "multi_modal_data": {"image": image_payload},
+                                    }
+                                )
+                            pipeline_inputs = multimodal_inputs
+
                         control_outputs = self.rep_control_pipeline(
-                            batch["prompts"],  # Use formatted prompts from dataset
+                            pipeline_inputs,
                             activations=activations,
                             batch_size=self.batch_size,
                             **generation_params,

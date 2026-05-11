@@ -1,0 +1,151 @@
+experiment_name: "game_theory"
+description: "Game theory config for text LMs across 9 game task variants"
+version: "1.0.0"
+
+models:
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen3-0.6B"
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen3-1.7B"
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen3-4B"
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen2.5-0.5B-Instruct"
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen2.5-1.5B-Instruct"
+  - "${USER_HOME}/huggingface_models/Qwen/Qwen2.5-3B-Instruct"
+  - "${USER_HOME}/huggingface_models/google/gemma-3-270m-it"
+  - "${USER_HOME}/huggingface_models/google/gemma-3-1b-it"
+  - "${USER_HOME}/huggingface_models/google/gemma-3-4b-it"
+  - "${USER_HOME}/huggingface_models/microsoft/Phi-3.5-mini-instruct/"
+  - "${USER_HOME}/huggingface_models/microsoft/Phi-4-mini-instruct/"
+  - "${USER_HOME}/huggingface_models/meta-llama/Llama-3.2-1B-Instruct"
+  - "${USER_HOME}/huggingface_models/meta-llama/Llama-3.2-3B-Instruct"
+
+emotions: ["anger", "sadness", "happiness", "surprise", "fear", "disgust"]
+intensities: [0.8, 1.0, 1.2]
+
+benchmarks:
+  - name: "game_theory"
+    task_type: "Prisoners_Dilemma"
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Stag_Hunt"
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Escalation_Game"
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 0
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Trust_Game_Trustor"
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 0
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Trust_Game_Trustee"
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 1
+      previous_trust_level: 1
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Ultimatum_Game_Proposer"
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 0
+      previous_offer_level: 1
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Ultimatum_Game_Responder"
+    augmentation_config:
+      shuffle_options: true
+      previous_actions_length: 1
+      previous_offer_level: 2
+    enable_auto_truncation: false
+    truncation_strategy: "right"
+    preserve_ratio: 1.0
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Beauty_Contest"
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+  - name: "game_theory"
+    task_type: "Sealed_Auction"
+    augmentation_config:
+      shuffle_options: true
+    llm_eval_config:
+      client: "gemini"
+      model: "gemini-2.5-flash-lite"
+      temperature: 0.0
+    sample_limit: 300
+
+loading_config:
+  gpu_memory_utilization: 0.79
+  enforce_eager: true
+  quantization: null
+  max_model_len: 8192
+  trust_remote_code: true
+  dtype: "bfloat16"
+  seed: 1
+  disable_custom_all_reduce: false
+  additional_vllm_kwargs: {}
+
+repeat_runs: 1
+
+generation_config:
+  temperature: 0.0
+  max_new_tokens: 500
+  do_sample: false
+  top_p: 0.9
+  repetition_penalty: 1.0
+  top_k: -1
+  min_p: 0.0
+  presence_penalty: 0.0
+  frequency_penalty: 0.0
+  enable_thinking: false
+
+batch_size: 300
+
+repe_eng_config:
+  data_dir: "data/stimulus/crowd-enVent_textlike"
+  control_layers:
+    strategy: "middle_third"
+
+output_dir: "results/new_game_theory/shuffle_300_samples"
+sanity_check: false
+defer_evaluation: false
